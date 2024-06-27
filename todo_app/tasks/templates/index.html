@@ -8,40 +8,54 @@
       class="flex flex-1 flex-wrap justify-center gap-3 bg-[#fff0] w-10/12 md:w-11/12 h-full mb-3 rounded-2xl p-3 overflow-y-auto scrollbar-hide"
     >
       <!-- Task card -->
-      <div
-        class="w-[355px] flex flex-col shadow-md bg-white h-[120px] rounded-xl p-3"
-      >
-        <!-- Top -->
-        <div class="flex flex-row justify-between">
-          <!-- Left: Title and Description -->
-          <div>
-            <a href="{% url 'detail' %}">
-              <h1 class="text-green-500 font-semibold text-xl">
-                Sample Task
-              </h1>
-            </a>
-            <p class="text-gray-500 text-md">
-              The app will contain the following...
-            </p>
-          </div>
-          <!-- Right: Toggle complete mode -->
-          <a href="">
-            <i class="bx bx-check-circle bx-sm text-blue-500"></i>
-            <!-- <i class='bx bxs-check-circle'></i> -->
-          </a>
-        </div>
-        <!-- Line -->
-        <hr class="border-t border-gray-200 my-2" />
-        <!-- Bottom: Time and Date | Delete -->
-        <div class="flex flex-row justify-between">
-          <h2 class="text-gray-500 font-bold">
-            Due Today <span class="font-medium text-gray-400">12:00 pm</span>
-          </h2>
-          <a href="{% url 'delete' %}">
-            <i class="bx bxs-trash bx-sm text-red-500"></i>
-          </a>
-        </div>
-      </div>
+{% for task in tasks %}
+<div
+  class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/5 flex flex-col shadow-md {{ task.completed|yesno:'bg-gray,bg-white' }} h-auto rounded-xl p-3"
+>
+  <!-- Top -->
+  <div class="flex flex-row justify-between">
+    <!-- Left: Title and Description -->
+    <div>
+      <a href="{% url 'detail' %}">
+        <h1
+          class="text-green-500 font-semibold text-xl {{ task.completed|yesno:'italic line-through,' }}"
+        >
+          {{ task.title }}
+        </h1>
+      </a>
+      <p class="text-gray-500 text-md {{ task.completed|yesno:'italic line-through,' }}">
+        {{ task.description | slice:":50" }}...
+      </p>
+    </div>
+    <!-- Right: Toggle complete mode -->
+    <a href="">
+      <i class="bx bxs-check-circle bx-sm {{ task.completed|yesno:'text-green-500,text-blue-500' }}"></i>
+    </a>
+  </div>
+  <!-- Line -->
+  <hr class="border-t border-gray-200 my-2" />
+  <!-- Bottom: Time and Date | Delete -->
+  <div class="flex flex-row justify-between">
+    <h2 class="{{ task.completed|yesno:'text-blue-400 font-bold,text-gray-500 font-bold' }}">
+      {% if task.completed %}
+        Completed <i class="bx bxs-badge-check"></i>
+      {% else %}
+        Due {{ task.due_date }} <span class="font-medium text-gray-400">{{ task.due_time }}</span>
+      {% endif %}
+    </h2>
+    <div class="flex flex-row">
+      {% if not task.completed %}
+      <a href="{% url 'edit' %}">
+        <i class="bx bxs-pencil bx-sm text-blue-500"></i>
+      </a>
+      {% endif %}
+      <a href="{% url 'delete' %}">
+        <i class="bx bxs-trash bx-sm text-red-500"></i>
+      </a>
+    </div>
+  </div>
+</div>
+{% endfor %}
     </section>
     
 {% endblock content %}
